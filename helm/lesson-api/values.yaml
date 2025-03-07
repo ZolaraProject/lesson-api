@@ -20,8 +20,8 @@ logLevel: DEBUG
 
 maximumStorageUses: 50
 
-pkiVaultService:
-  host: "pki-vault-service.vault.svc.cluster.local"
+lessonVaultService:
+  host: "lesson-vault-service.vault.svc.cluster.local"
   port: 8080
 
 readinessProbe:
