@@ -1,0 +1,7 @@
+builds:
+- id: lesson-api
+  dir: ./
+  outputImage: nexuszolara.me/zolara-microservice/lesson-api
+  ldflags:
+  - -s -w
+  

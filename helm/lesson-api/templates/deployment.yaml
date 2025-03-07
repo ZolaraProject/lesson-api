@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ include "lessonapi.name" . }}-dpl"
+  labels:
+{{ include "lessonapi.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector: 
+    matchLabels:
+{{ include "lessonapi.matchLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "lessonapi.labels" . | indent 8 }}
+      annotations:
+        kubectl.kubernetes.io/default-logs-container: {{ include "lessonapi.name" . }}
+    spec:
+      {{- with .Values.podSecurityContext }}
+      podSecurityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ include "lessonapi.name" . }}
+        image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.port }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "lessonapi.name" . }}-cm
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+        lifecycle:
+          {{ toYaml .Values.lifecycle | nindent 10 }}
